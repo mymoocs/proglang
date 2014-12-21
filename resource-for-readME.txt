@@ -1,0 +1,16 @@
+http://courses.cs.washington.edu/courses/cse341/04wi/lectures/
+
+http://contrapunctus.net/league/haques/qcheck/
+
+Progress
+
+Start November 26, 2015
+Section1 done before
+Section2 take a week
+Section3 take a week
+Section4 2-3 days
+
+Dec, 11, 2014 - recap ML staff, finish Homeworks
+
+
+Dec, 11, 2014 - start Section5
