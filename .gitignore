@@ -1,4 +1,5 @@
 *~
+*.bak
 *darcs*
 compiled
 Section*

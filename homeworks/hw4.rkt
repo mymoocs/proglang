@@ -119,8 +119,49 @@
 )
 
 
+;; 10. 
 
+(define (cached-assoc1 xs n)
+  (let* ([vmemo (make-vector n #f)]
+         [i 0]
+         [f (lambda(v)
+              (let* ([ans (vector-assoc v vmemo)])
+                (if ans
+                    ans
+                    (begin
+                      (vector-set! vmemo i (assoc v xs))
+                      (set! i (+ i 1))
+                      (if (= n i) (set! i 0) null)
+                      (printf "i=~a\n" i)
+                      (printf "vmemo=~v\n" vmemo)
+                      (assoc v xs))
+                    )
+                ))])
+    f
+    ))
 
+(define (cached-assoc xs n)
+  (let* ([vmemo (make-vector n #f)]
+         [i 0]
+         [f (lambda(v)
+              (let ([vans (vector-assoc v vmemo)])
+                (if vans
+                    vans
+                    (let* ([val (assoc v xs)])
+                      (if val
+                          (begin
+                            (vector-set! vmemo i val)
+                            (set! i (+ i 1))
+                            (cond [(= i n)  (set! i 0)])
+                            (printf "i=~a\n" i)
+                            (printf "vmemo=~v\n" vmemo)
+                            val)
+                          val)
+                      )
+                    )
+                ))])
+    f
+    ))
 
 
 
