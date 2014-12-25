@@ -1,7 +1,7 @@
 ;; Programming Languages, Homework 5
 
-#lang racket
-(provide (all-defined-out)) ;; so we can put tests in a second file
+;; #lang racket
+;; (provide (all-defined-out)) ;; so we can put tests in a second file
 
 ;; definition of structures for MUPL programs - Do NOT change
 (struct var  (string) #:transparent)  ;; a variable, e.g., (var "foo")
@@ -22,7 +22,15 @@
 
 ;; Problem 1
 
-;; CHANGE (put your solutions here)
+;; (a).
+
+(define (racketlist->mupllist rs)
+  (cond [(null? rs) (aunit)]
+        [#t (apair (car rs) (racketlist->mupllist (cdr rs)))]))
+        
+(define (mupllist->racketlist ms)
+  (cond [(aunit? ms) null]
+        [#t (cons (apair-e1 ms) (mupllist->racketlist (apair-e2 ms)))]))
 
 ;; Problem 2
 
@@ -38,8 +46,10 @@
 ;; We will test eval-under-env by calling it directly even though
 ;; "in real life" it would be a helper function of eval-exp.
 (define (eval-under-env e env)
+;;(begin ();;print env)
   (cond [(var? e) 
          (envlookup env (var-string e))]
+        [(int? e) e]
         [(add? e) 
          (let ([v1 (eval-under-env (add-e1 e) env)]
                [v2 (eval-under-env (add-e2 e) env)])
@@ -48,9 +58,21 @@
                (int (+ (int-num v1) 
                        (int-num v2)))
                (error "MUPL addition applied to non-number")))]
-        ;; CHANGE add more cases here
+        [(fun? e)
+         (let ([arg (envlookup env (fun-formal e))]
+               [body (eval-under-env (fun-body e) env)])
+           ((lambda() body)))]
+               
+        [(ifgreater? e)
+         (let ([v1 (eval-under-env (ifgreater-e1 e) env)]
+               [v2 (eval-under-env (ifgreater-e2 e) env)]
+               [v3 (eval-under-env (ifgreater-e3 e) env)]
+               [v4 (eval-under-env (ifgreater-e4 e) env)])
+           (if (> v1 v2)
+               v3
+               v4))]
         [#t (error (format "bad MUPL expression: ~v" e))]))
-
+;;)
 ;; Do NOT change
 (define (eval-exp e)
   (eval-under-env e null))
