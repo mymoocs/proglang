@@ -1,7 +1,7 @@
 ;; Programming Languages, Homework 5
 
-;; #lang racket
-;; (provide (all-defined-out)) ;; so we can put tests in a second file
+#lang racket
+(provide (all-defined-out)) ;; so we can put tests in a second file
 
 ;; definition of structures for MUPL programs - Do NOT change
 (struct var  (string) #:transparent)  ;; a variable, e.g., (var "foo")
@@ -37,9 +37,12 @@
 ;; lookup a variable in an environment
 ;; Do NOT change this function
 (define (envlookup env str)
+(begin (printf "env=~v\n" env)
+       (printf "var=~v\n" str)
+       
   (cond [(null? env) (error "unbound variable during evaluation" str)]
         [(equal? (car (car env)) str) (cdr (car env))]
-        [#t (envlookup (cdr env) str)]))
+        [#t (envlookup (cdr env) str)])))
 
 ;; Do NOT change the two cases given to you.  
 ;; DO add more cases for other kinds of MUPL expressions.
@@ -53,16 +56,15 @@
         [(add? e) 
          (let ([v1 (eval-under-env (add-e1 e) env)]
                [v2 (eval-under-env (add-e2 e) env)])
-           (if (and (int? v1)
-                    (int? v2))
-               (int (+ (int-num v1) 
-                       (int-num v2)))
-               (error "MUPL addition applied to non-number")))]
-        [(fun? e)
-         (let ([arg (envlookup env (fun-formal e))]
-               [body (eval-under-env (fun-body e) env)])
-           ((lambda() body)))]
-               
+               (begin (printf "v1=~s\n" v1)
+                      (printf "v2=~s\n" v2)
+                      (printf "?=~a\n" (int? v2))
+                      (if (and (int? v1)
+                               (int? v2))
+                          (int (+ (int-num v1) 
+                                  (int-num v2)))
+                          (error "MUPL addition applied to non-number"))))]
+        ;; ifgreater
         [(ifgreater? e)
          (let ([v1 (eval-under-env (ifgreater-e1 e) env)]
                [v2 (eval-under-env (ifgreater-e2 e) env)]
@@ -71,7 +73,78 @@
            (if (> v1 v2)
                v3
                v4))]
-        [#t (error (format "bad MUPL expression: ~v" e))]))
+        ;; (eval-under-env (fun #f "x" (add (var "x") (int 7))) 
+        ;;                            (list (cons "x" (int 3))
+       #| [(fun? e)
+         (begin (printf "e=~v\n" e)
+         ((let
+              ([arg
+                
+                (fun-formal e)
+                ] 
+               [body
+                (begin 
+                       (printf "body=~v\n" (fun-body e))
+                       (printf "env=~v\n" (cons (cons (fun-formal e) (int 4)) env) )
+                       (lambda(a) (eval-under-env
+                                   (fun-body e) (list (cons (cons (fun-formal e) a) env)))))])
+                                   ;;(cond [(null? env) 
+                                     ;;     (list (cons (cons arg a) env))]
+                                       ;;  [#t (cons (cons arg a) env)]
+                                         ;;))))])
+            (lambda()
+              (begin (printf "param=~s\n" "p")
+                     (body (int 4)))
+              ))))]
+        |#
+        
+        [(fun? e)
+         (lambda(p)
+           (eval-under-env 
+            (fun-body e) 
+            (cons (cons (fun-formal e) p) env)
+                  ))]
+
+
+        ;; call
+        [(call? e) e]
+
+        ;; mlet
+        [(mlet? e)
+         (define local-env null)
+         (let* (
+               [var  (mlet-var e)]
+               [exp  (eval-under-env (mlet-e e) local-env)]
+               [body (eval-under-env (mlet-body e) (list (cons var exp)))])
+           ((lambda () body)))]
+
+        ;; apair        
+        [(apair? e)
+         (let ([v1 (eval-under-env (apair-e1 e) env)]
+               [v2 (eval-under-env (apair-e2 e) env)])
+           (cons v1 v2))]
+        ;; snd
+        [(snd? e)
+         (let ([v (eval-under-env (snd-e e) env)])
+           (if (pair? v)
+               (cdr v)
+               (error "MUPL sdn applied to non pair")))]
+        ;; fst
+        [(fst? e)
+         (let ([v (eval-under-env (snd-e e) env)])
+           (if (pair? v)
+               (car v)
+               (error "MUPL sdn applied to non pair")))]
+        ;; aunit
+        [(aunit? e) '()]
+        ;; isaunit
+        [(isaunit? e)
+         (let ([v (eval-under-env (isaunit-e e) env)])
+           (if (null? v)
+               (int 1)
+               (int 0)))]
+         
+        [#t (error (format "bad MUPL expression: ~v" e))]))                      
 ;;)
 ;; Do NOT change
 (define (eval-exp e)

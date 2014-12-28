@@ -28,6 +28,12 @@
    ;; mlet test
    (check-equal? (eval-exp (mlet "x" (int 1) (add (int 5) (var "x")))) 
                  (int 6) "mlet test")
+   ;; another mlet-test
+   (check-equal? (eval-exp (mlet "myvar" (int 1) (var "myvar")))
+                 (int 1) "mlet test")
+   ;; (mlet "z" (int 1)  (fun "f" "x" (add (var "x")(var "z"))))
+   ;; (mlet "z" (var "z") (fun "f" "x" (add (var "x")(var "z"))))
+
    
    ;; call test
    (check-equal? (eval-exp (call (closure '() (fun #f "x" 
@@ -60,7 +66,7 @@
                  (apair (int 8) (aunit)) "mupl-map test")
    
    ;; problems 1, 2, and 4 combined test
-   (check-equal? (mupllist->racketlist
+   (check-equal? (mupllist->racketlistxb
                   (eval-exp (call (call mupl-mapAddN (int 7))
                                   (racketlist->mupllist 
                                    (list (int 3) (int 4) (int 9)))))) 
@@ -71,3 +77,4 @@
 (require rackunit/text-ui)
 ;; runs the test
 (run-tests tests)
+

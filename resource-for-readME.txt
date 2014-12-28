@@ -9,8 +9,12 @@ Section1 done before
 Section2 take a week
 Section3 take a week
 Section4 2-3 days
+Section5 5-6 days
+Section6 3.5 days for video, 
+
 
 Dec, 11, 2014 - recap ML staff, finish Homeworks
 
 
-Dec, 11, 2014 - start Section5
+Dec, 14, 2014 - start Section5
+Dec, 22, 2014 - start Section6 video, hw - start on 25
