@@ -2,6 +2,8 @@ http://courses.cs.washington.edu/courses/cse341/04wi/lectures/
 
 http://contrapunctus.net/league/haques/qcheck/
 
+http://tuhdo.github.io/emacs-for-proglang.html
+
 Progress
 
 Start November 26, 2015

@@ -67,12 +67,11 @@
         ;; ifgreater
         [(ifgreater? e)
          (let ([v1 (eval-under-env (ifgreater-e1 e) env)]
-               [v2 (eval-under-env (ifgreater-e2 e) env)]
-               [v3 (eval-under-env (ifgreater-e3 e) env)]
-               [v4 (eval-under-env (ifgreater-e4 e) env)])
-           (if (> v1 v2)
-               v3
-               v4))]
+               [v2 (eval-under-env (ifgreater-e2 e) env)])
+           (if (> (int-num v1) (int-num v2))
+               (eval-under-env (ifgreater-e3 e) env)
+               (eval-under-env (ifgreater-e4 e) env)))]
+
         ;; (eval-under-env (fun #f "x" (add (var "x") (int 7))) 
         ;;                            (list (cons "x" (int 3))
        #| [(fun? e)
@@ -98,25 +97,48 @@
               ))))]
         |#
         
-        [(fun? e)
+       #| [(fun? e)
          (lambda(p)
            (eval-under-env 
             (fun-body e) 
             (cons (cons (fun-formal e) p) env)
                   ))]
+        |#
 
+        [(fun? e) (closure env e)]
 
+       [(closure? e) e]
         ;; call
-        [(call? e) e]
+        [(call? e) 
+         (let ([e1 (eval-under-env (call-funexp e) env)]
+               [e2 (eval-under-env (call-actual e) env)])
+           (begin (printf "~s\n" e2)
+                  (printf "~s\n" e1)
+                  (printf "~s\n"  (fun-nameopt (closure-fun e1)))
+                  (printf "~s\n"  (closure-fun e1))
+            (if (closure? e1)
+                 (let ([static-env (closure-env e1)]
+                       [fun1 (closure-fun e1)]
+                       [farg-env (cons (fun-formal (closure-fun e1)) e2)]
+                       [fname (fun-nameopt (closure-fun e1))])
+                   (if fname
+                       (eval-under-env fun1  (cons (cons farg-env  (cons fname e1)) static-env))
+                       (eval-under-env (fun-body fun1)  (cons farg-env   static-env))
+                       )
+                   )
+                 (error "MUPL addition applied to non-number"))
+            ))]
 
         ;; mlet
         [(mlet? e)
          (define local-env null)
          (let* (
                [var  (mlet-var e)]
-               [exp  (eval-under-env (mlet-e e) local-env)]
-               [body (eval-under-env (mlet-body e) (list (cons var exp)))])
-           ((lambda () body)))]
+               [exp  (eval-under-env (mlet-e e) env)]
+               [body (eval-under-env (mlet-body e)
+                                     (cons (cons var exp) env))])
+                                     ;(list (cons var exp)))])
+           ((lambda () (eval-under-env body env))))]
 
         ;; apair        
         [(apair? e)
@@ -131,16 +153,16 @@
                (error "MUPL sdn applied to non pair")))]
         ;; fst
         [(fst? e)
-         (let ([v (eval-under-env (snd-e e) env)])
+         (let ([v (eval-under-env (fst-e e) env)])
            (if (pair? v)
                (car v)
                (error "MUPL sdn applied to non pair")))]
         ;; aunit
-        [(aunit? e) '()]
+        [(aunit? e) (aunit)]
         ;; isaunit
         [(isaunit? e)
          (let ([v (eval-under-env (isaunit-e e) env)])
-           (if (null? v)
+           (if (aunit? v)
                (int 1)
                (int 0)))]
          
