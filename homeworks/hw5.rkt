@@ -187,11 +187,17 @@
 
 (define (mlet* lstlst e2) 
   (if (null? lstlst)
-      (eval-under-env e2 env)
-      (mlet (car (car lstlst)) (eval-under-env (cdr (car lstlst)) env)
-            mlet* (cdr lstlst))))
+      e2
+      (mlet (car (car lstlst)) (cdr (car lstlst))
+            (mlet* (cdr lstlst) e2))
+      ))
 
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+
+(define (ifeq e1 e2 e3 e4) 
+;;(mlet "_x" (int-num e1)
+     ;; (mlet "_y" (int-num e2)
+  (eval-exp (ifaunit (int (- (int-num e1) (int-num e2))) e3 e4)))
+  
 
 ;; Problem 4
 

@@ -32,8 +32,8 @@
    (check-equal? (eval-exp (mlet "myvar" (int 1) (var "myvar")))
                  (int 1) "mlet test")
    
-   ;;(check-equal? (mlet "z" (int 1)  (fun "f" "x" (add (var "x")(var "z"))) (int 3))
-          ;;       (int 2) "mlet test")
+   ;;(check-equal? (eval-exp (mlet "z" (int 1)  (fun "f" "x" (add (var "x")(var "z"))) (int 3)))
+            ;;   (int 2) "mlet test")
    
   ;; (check-equal? (mlet "z" (var "z") (fun "f" "x" (add (var "x")(var "z"))))
                
@@ -100,7 +100,8 @@
    (check-equal? (eval-exp (add (int 1) (int 2))) (int 3) "adding two ints")
    (check-equal? (eval-exp (ifgreater (int 1) (int 0) (int 1) (int 0))) (int 1) "ifgreater: true case")
    (check-equal? (eval-exp (ifgreater (int 0) (int 0) (int 1) (int 0))) (int 0) "ifgreater: false case")
-   (check-equal? (eval-exp (apair (add (int 1) (int 2)) (ifgreater (int 2) (int 1) (int 3) (int 0)))) (apair (int 3) (int 3)) "apair of adds")
+   (check-equal? (eval-exp (apair (add (int 1) (int 2)) (ifgreater (int 2) (int 1) (int 3) (int 0)))) 
+                 (apair (int 3) (int 3)) "apair of adds")
    (check-equal? (eval-exp (aunit)) (aunit) "eval-exp aunit")
    (check-equal? (eval-exp (isaunit (aunit))) (int 1) "isaunit: true case")
    (check-equal? (eval-exp (isaunit (int 100))) (int 0) "isaunit: false case")
@@ -116,10 +117,10 @@
    (check-equal? (eval-exp (fun #f "x" (aunit))) (closure null (fun #f "x" (aunit))) "fun evaluates to closure")
    (check-equal? (eval-exp (call (fun #f "x" (add (var "x") (int 1))) (int 1))) (int 2) "call a fun struct")
    (check-equal? (eval-exp (call (fun "sum-to" "n" 
-                                      ifgreater (var "n") (int 1) 
-                                      (add (var "n") 
-                                           (call (var "sum-to") (add (var "n") (int -1)))) 
-                                      (int 1))) (int 5)) 
+                                      (ifgreater (var "n") (int 1) 
+                                                 (add (var "n") 
+                                                      (call (var "sum-to") (add (var "n") (int -1)))) 
+                                                 (int 1))) (int 5)))
                  (int 15) "call: recursive function call")
    
    
