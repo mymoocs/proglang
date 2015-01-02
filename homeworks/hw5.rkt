@@ -17,8 +17,8 @@
 (struct aunit ()    #:transparent) ;; unit value -- good for ending a list
 (struct isaunit (e) #:transparent) ;; evaluate to 1 if e is unit else 0
 
-;; a closure is not in "source" programs; it is what functions evaluate to
-(struct closure (env fun) #:transparent) 
+(struct closure (env fun) #:transparent) ;; a closure is not in "source" programs; 
+                                         ;; it is what functions evaluate to
 
 ;; Problem 1
 
@@ -112,50 +112,59 @@
         [(call? e) 
          (let ([e1 (eval-under-env (call-funexp e) env)]
                [e2 (eval-under-env (call-actual e) env)])
-           (begin (printf "~s\n" e2)
-                  (printf "~s\n" e1)
-                  (printf "~s\n"  (fun-nameopt (closure-fun e1)))
-                  (printf "~s\n"  (closure-fun e1))
+           (begin (printf "actual-params=~s\n" e2)
+                  (printf "body=~s\n" e1)
+                  (printf "fun-name=~s\n"  (fun-nameopt (closure-fun e1)))
+                  (printf "closure-fun=~s\n"  (closure-fun e1))
+                  (printf "closure-env=~s\n"  (closure-env e1))
             (if (closure? e1)
                  (let ([static-env (closure-env e1)]
                        [fun1 (closure-fun e1)]
                        [farg-env (cons (fun-formal (closure-fun e1)) e2)]
                        [fname (fun-nameopt (closure-fun e1))])
-                   (if fname
-                       (eval-under-env fun1  (cons (cons farg-env  (cons fname e1)) static-env))
-                       (eval-under-env (fun-body fun1)  (cons farg-env   static-env))
-                       )
-                   )
+                   (begin
+                     (printf "static-env=~s\n"  static-env)
+                     (printf "new-env1-then=~s\n" (cons (cons farg-env  (cons fname e1)) static-env))
+                     (printf "new-env1-else=~s\n" (cons farg-env   static-env))
+                     (if fname
+                         (eval-under-env (fun-body fun1)
+                                         (if (null? static-env)
+                                             (list farg-env  (cons fname e1))
+                                             (list (cons farg-env  (cons fname e1)) static-env)))
+                         (eval-under-env (fun-body fun1)  (cons farg-env   static-env))
+                         )
+                     )
+                 )
                  (error "MUPL addition applied to non-number"))
             ))]
 
         ;; mlet
         [(mlet? e)
-         (define local-env null)
-         (let* (
-               [var  (mlet-var e)]
-               [exp  (eval-under-env (mlet-e e) env)]
-               [body (eval-under-env (mlet-body e)
-                                     (cons (cons var exp) env))])
-                                     ;(list (cons var exp)))])
-           ((lambda () (eval-under-env body env))))]
-
+         (let ([var  (mlet-var e)]
+               [exp  (eval-under-env (mlet-e e) env)])
+           ((lambda ()
+              (eval-under-env (mlet-body e)
+                              (if (null? env)
+                                  (list (cons var exp))
+                                  (cons (cons var exp) env)
+                              ))))
+          )]
         ;; apair        
         [(apair? e)
          (let ([v1 (eval-under-env (apair-e1 e) env)]
                [v2 (eval-under-env (apair-e2 e) env)])
-           (cons v1 v2))]
+           (apair v1 v2))]
         ;; snd
         [(snd? e)
          (let ([v (eval-under-env (snd-e e) env)])
-           (if (pair? v)
-               (cdr v)
-               (error "MUPL sdn applied to non pair")))]
+           (if (apair? v)
+               (apair-e2  v)
+               (error "MUPL snd applied to non pair")))]
         ;; fst
         [(fst? e)
          (let ([v (eval-under-env (fst-e e) env)])
-           (if (pair? v)
-               (car v)
+           (if (apair? v)
+               (apair-e1 v)
                (error "MUPL sdn applied to non pair")))]
         ;; aunit
         [(aunit? e) (aunit)]
@@ -174,9 +183,13 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) "CHANGE")
+(define (ifaunit e1 e2 e3) (ifgreater (isaunit e1) (int 0) e2 e3))
 
-(define (mlet* lstlst e2) "CHANGE")
+(define (mlet* lstlst e2) 
+  (if (null? lstlst)
+      (eval-under-env e2 env)
+      (mlet (car (car lstlst)) (eval-under-env (cdr (car lstlst)) env)
+            mlet* (cdr lstlst))))
 
 (define (ifeq e1 e2 e3 e4) "CHANGE")
 

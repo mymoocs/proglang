@@ -37,11 +37,15 @@
    
   ;; (check-equal? (mlet "z" (var "z") (fun "f" "x" (add (var "x")(var "z"))))
                
-   (check-equal? ((mlet "f" (fun "length" "lst" (ifgreater (isaunit (var "lst")) 
-                                                           (int 0) (int 0) 
-                                                           (add (int 1) (call (var "length")
-                                                                              (snd (var "lst"))))))
-                        (call (var "f") (aunit)))
+   
+   (check-equal? (eval-exp (mlet "f" (fun "length" "lst" 
+                                          (ifgreater (isaunit (var "lst")) 
+                                                     (int 0) (int 0) (add (int 1) 
+                                                                          (call (var "length") (snd (var "lst")))))) 
+                                 (call (var "f") (aunit))))
+                 (int 0) "AAAA")
+   
+   
    (check-equal? (eval-exp (mlet "x" (int 3)
                                  (mlet "y" (int 4)
                                        (mlet "p" (apair (var "x") (var "y"))
@@ -51,6 +55,7 @@
    (check-equal? (eval-exp (mlet "x" (aunit) (mlet "x" (int 3) (add (int 1) (var "x")))))
               (int 4) "shadowed mlet")
    
+  
    ;; call test
    (check-equal? (eval-exp (call (closure '() (fun #f "x" 
                                                    (add (var "x") (int 7)))) 
@@ -99,7 +104,7 @@
    (check-equal? (eval-exp (aunit)) (aunit) "eval-exp aunit")
    (check-equal? (eval-exp (isaunit (aunit))) (int 1) "isaunit: true case")
    (check-equal? (eval-exp (isaunit (int 100))) (int 0) "isaunit: false case")
-   (check-equal? (eval-exp (isaunit (fst (apair (aunit) (aunit))))) (int 1) "isaunit: true case"
+   (check-equal? (eval-exp (isaunit (fst (apair (aunit) (aunit))))) (int 1) "isaunit: true case")
    (check-equal? (eval-exp (mlet "xs" (apair (int 1) (int 2)) (var "xs"))) (apair (int 1) (int 2)) "mlet with pair")
    (check-equal? (eval-exp (mlet "xs" (apair (int 1) (int 2)) (fst (var "xs")))) (int 1) "mlet + fst")
    (check-equal? (eval-exp (mlet "f" 
