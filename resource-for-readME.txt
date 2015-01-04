@@ -19,4 +19,6 @@ Dec, 11, 2014 - recap ML staff, finish Homeworks
 
 
 Dec, 14, 2014 - start Section5
-Dec, 22, 2014 - start Section6 video, hw - start on 25
+Dec, 22, 2014 - start Section6 video, 
+	hw - start on 25
+	hw - end Jun 04 (without challange part)

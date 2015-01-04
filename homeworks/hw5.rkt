@@ -27,6 +27,11 @@
 (define (racketlist->mupllist rs)
   (cond [(null? rs) (aunit)]
         [#t (apair (car rs) (racketlist->mupllist (cdr rs)))]))
+
+;; for test
+(define (racket-intlist->mupl-intlist rs)
+  (cond [(null? rs) (aunit)]
+        [#t (apair (int (car rs)) (racketlist->mupllist (cdr rs)))]))
         
 (define (mupllist->racketlist ms)
   (cond [(aunit? ms) null]
@@ -165,7 +170,7 @@
          (let ([v (eval-under-env (fst-e e) env)])
            (if (apair? v)
                (apair-e1 v)
-               (error "MUPL sdn applied to non pair")))]
+               (error "MUPL fst applied to non pair")))]
         ;; aunit
         [(aunit? e) (aunit)]
         ;; isaunit
@@ -175,7 +180,7 @@
                (int 1)
                (int 0)))]
          
-        [#t (error (format "bad MUPL expression: ~v" e))]))                      
+        [#t (error (format "bad MUPL expression-otherwise case: ~v" e))]))                      
 ;;)
 ;; Do NOT change
 (define (eval-exp e)
@@ -194,18 +199,32 @@
 
 
 (define (ifeq e1 e2 e3 e4) 
-;;(mlet "_x" (int-num e1)
-     ;; (mlet "_y" (int-num e2)
-  (eval-exp (ifaunit (int (- (int-num e1) (int-num e2))) e3 e4)))
-  
-
+  (mlet "_x"  e1
+        (mlet "_y" e2
+              (ifgreater (var "_x") (var "_y")
+                         e4
+                         (ifgreater (var "_y") (var "_x")
+                                    e4
+                                    e3)))))
 ;; Problem 4
 
-(define mupl-map "CHANGE")
+(define mupl-map
+  (fun "_map" "f"
+       (fun #f "xs"
+            (ifeq (isaunit (var "xs")) (int 1)
+                  (aunit)
+                  (apair (call (var "f")  (fst (var "xs")))
+                         (call (call (var "_map") 
+                                     (var "f"))
+                               (snd (var "xs")))
+                         ))
+            )))
+
 
 (define mupl-mapAddN 
   (mlet "map" mupl-map
-        "CHANGE (notice map is now in MUPL scope)"))
+        (fun #f "v" 
+             (call (var "map") (fun #f "x" (add (var "x") (var "v"))))) ))
 
 ;; Challenge Problem
 

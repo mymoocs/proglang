@@ -80,18 +80,22 @@
    (check-equal? (eval-exp (ifeq (int 1) (int 2) (int 3) (int 4))) 
                  (int 4) "ifeq test")
    
+   (check-equal? (eval-exp (call (fun #f "x" (ifeq (var "x") (int 17) (int 1) (int 0))) (int 17)))
+                   (int 1) "ifeq test3")
+   
+  
    ;; mupl-map test
    (check-equal? (eval-exp (call (call mupl-map 
                                        (fun #f "x" (add (var "x") (int 7)))) 
-                                 (apair (int 1) (aunit)))) 
-                 (apair (int 8) (aunit)) "mupl-map test")
+                                 (apair  (int 1) (apair (int 1) (aunit))))) 
+                 (apair (int 8) (apair (int 8) (aunit))) "mupl-map test")
    
    ;; problems 1, 2, and 4 combined test
-  #| (check-equal? (mupllist->racketlistxb
+ (check-equal? (mupllist->racketlist
                   (eval-exp (call (call mupl-mapAddN (int 7))
                                   (racketlist->mupllist 
                                    (list (int 3) (int 4) (int 9)))))) 
-                 (list (int 10) (int 11) (int 16)) "combined test")|#
+                 (list (int 10) (int 11) (int 16)) "combined test")
 
 ;; some other tests from https://class.coursera.org/proglang-003/forum/thread?thread_id=1303#comment-3827
 
@@ -123,10 +127,48 @@
                                                  (int 1))) (int 5)))
                  (int 15) "call: recursive function call")
    
+    (check-equal? (eval-exp (call (fun "sum" "es" 
+           (ifaunit (var "es") 
+                    (int 0) 
+                    (add (fst (var "es"))
+                         (call (var "sum") (snd (var "es"))))))
+      (racketlist->mupllist (list (int 10) (int 20) (int 30)))))
+                  (int 60) "another recursive call")
+   
+   
    
    ))
+
+(define challange-tests
+  (test-suite
+   "test of Challenge Problems of Assignment 5"
+   
+   ;; tests for chanlange problems
+    (check-equal? 
+    (eval-exp-c 
+     (mlet* (list (cons "y" (int 5))
+                  (cons "z" (int 5)))
+            (call 
+             (fun #f "x"
+                  (call 
+                   (fun "quxx" "moo"
+                        (add (add (call (fun #f "foo" 
+                                             (add (var "x") (var "y")))
+                                        (int 5))
+                                  (call (fun "bar" "baz" 
+                                             (add (var "baz") (var "y")))
+                                        (int 5)))
+                             (var "z")))
+                   (int 5)))
+             (int 5))))
+    (int 25))
+   
+   
+   ))
+
 
 (require rackunit/text-ui)
 ;; runs the test
 (run-tests tests)
+(run-tests challange-tests)
 
