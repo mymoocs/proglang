@@ -1,5 +1,5 @@
 -- ProgLang first week homeworks in Haskell
-
+{-# OPTIONS_GHC -Wall #-}
 module DateProcessing where
 
 data Date = Date Int Int Int  -- Int -> Int -> Int
@@ -42,13 +42,56 @@ datesInMonths ds ms =
   case (ds, ms) of
    ([], _) -> []
    (_, []) -> []
-   (ds, (m:ms')) -> datesInMonth ds m ++ datesInMonths ds ms'
-  
-{-
-get_nth = fn : string list * int -> string
-date_to_string = fn : int * int * int -> string
-number_before_reaching_sum = fn : int * int list -> int
-what_month = fn : int -> int
-month_range = fn : int * int -> int list
-oldest = fn : (int * int * int) list -> (int * int * int) option  
--}
+   (ds', (m:ms')) -> datesInMonth ds' m ++ datesInMonths ds' ms'
+
+-- 6.
+get_nth :: [String] -> Int -> String
+get_nth [] _ = []
+get_nth (x:_) 1 = x
+get_nth (_:xs) n = get_nth xs (n-1)
+
+-- 7.
+date_to_string :: Date -> String
+date_to_string (Date d m y) = 
+  let ms = ["January","February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "Decembe"]
+      month = get_nth ms m
+  in month ++ " " ++ (show d) ++ ", " ++ (show y)
+
+-- 8.
+number_before_reaching_sum :: Int -> [Int] -> Int
+number_before_reaching_sum s xs  =
+  if n == length xs
+  then   -1
+  else   n -- index start from 1
+  where 
+    fn = (+ (-1)) . length .  takeWhile (< s) . scanl (+) 0
+    n = fn xs
+
+-- 9.
+what_month :: Int -> Int
+what_month n =
+  let ms = [31,28,31,30,31,30,31,31,30,31,30,31]
+  in number_before_reaching_sum n ms + 1
+
+--- 10.
+month_range :: Int -> Int -> [Int]
+month_range n m =
+  map what_month [n..m]
+
+-- 11.
+oldest :: [Date] -> Maybe Date
+oldest [] = Nothing
+oldest ys =
+  Just $ oldest' ys
+  where
+    oldest' :: [Date] -> Date
+    oldest' (x:xs) 
+          |null xs = x
+          |otherwise = let tailAnswer = oldest' xs
+                       in if isOlder x tailAnswer
+                          then x
+                          else tailAnswer
+

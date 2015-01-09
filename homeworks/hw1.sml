@@ -28,16 +28,11 @@ fun number_in_month(ls : (int*int*int) list, m : int)=
     else number_in_month(tl ls, m) 	     
                         
 
-
-
-
 (* 3 *)
 fun number_in_months(ls : (int*int*int) list, ms : int list)=
     if null ms 
     then 0 
     else number_in_month(ls, hd ms) + number_in_months(ls, tl ms)		    
-
-
 
 
 (* 4 *)
@@ -49,26 +44,13 @@ fun dates_in_month(ls : (int*int*int) list, m : int)=
 	then (hd ls)  ::  dates_in_month(tl ls, m)
     else dates_in_month(tl ls, m) 	     
     
-
-
-
-
-
-
 fun dates_in_months(ls : (int*int*int) list, ms : int list)=
     if null ms 
     then []
     else dates_in_month(ls, hd ms) @ dates_in_months(ls, tl ms)		    
 
-
-
-
-
 fun get_nth(ls : string list, n : int) = 
     if n=1 then hd ls else get_nth(tl ls, n-1)
-
-
-
 
 fun date_to_string(d : int*int*int) = 
     let 
@@ -83,7 +65,6 @@ fun date_to_string(d : int*int*int) =
 (* 8 *)
 fun number_before_reaching_sum(sum : int, ls : int list) = 
     let
-	    
 	    fun summer(xs : int list) =
 	        if null xs 
 	        then 0
@@ -93,10 +74,10 @@ fun number_before_reaching_sum(sum : int, ls : int list) =
 	        then [hd cs]
 	        else (hd cs) :: partialList(n-1, tl cs)
 			                           
-	fun checkRechingSum(m : int) = 
-	    if sum <= summer(partialList(m, ls))
-	    then m-1
-	    else checkRechingSum(m+1)
+	    fun checkRechingSum(m : int) = 
+	        if sum <= summer(partialList(m, ls))
+	        then m-1
+	        else checkRechingSum(m+1)
     in
 	    checkRechingSum(1)
     end
@@ -113,7 +94,7 @@ fun month_range(d1 : int, d2 : int) =
     let 
 	    fun fromTo(from : int, to : int) =
 	        if from = to
-	    then [from]
+	        then [from]
 	        else from :: fromTo(from+1, to)
 	    fun processing(xs : int list) = 
 	        if null xs
@@ -132,13 +113,13 @@ fun oldest (xs : (int *int*int) list) =
 	    fun max_nonempty (xs : (int*int*int) list) =
 	        if null (tl xs)
 	        then hd xs
-	    else
-		    let val tl_ans = max_nonempty(tl xs)
-		    in
-		        if is_older( hd xs , tl_ans)
-		        then hd xs
-		        else tl_ans
-		    end
+	        else
+		        let val tl_ans = max_nonempty(tl xs)
+		        in
+		            if is_older( hd xs , tl_ans)
+		            then hd xs
+		            else tl_ans
+		        end
     in
 	    SOME (max_nonempty xs)
     end
