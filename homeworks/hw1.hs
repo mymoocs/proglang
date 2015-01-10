@@ -1,9 +1,13 @@
 -- ProgLang first week homeworks in Haskell
 {-# OPTIONS_GHC -Wall #-}
-module DateProcessing where
+module Hw1 where
 
-data Date = Date Int Int Int  -- Int -> Int -> Int
+data Date = Date Int Int Int  
           deriving Show
+
+
+numberToString :: Int -> String
+numberToString num = show num -- Return a string of the number here!
 
 -- 1.                   
 isOlder :: Date -> Date -> Bool

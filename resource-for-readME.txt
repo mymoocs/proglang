@@ -4,6 +4,9 @@ http://contrapunctus.net/league/haques/qcheck/
 
 http://tuhdo.github.io/emacs-for-proglang.html
 
+
+[Practice Problem original](https://github.com/pbl64k/coursera-proglang-practice)
+
 Progress
 
 Start November 26, 2015
@@ -22,3 +25,6 @@ Dec, 14, 2014 - start Section5
 Dec, 22, 2014 - start Section6 video, 
 	hw - start on 25
 	hw - end Jun 04 (without challange part)
+
+Jan 09 - start section 7
+
