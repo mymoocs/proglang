@@ -2,6 +2,7 @@
 
 module P1 where
 import Prelude hiding(gcd)
+-- import Data.Maybe
 default(Integer)
 
 -- 1. Positive Numbers
@@ -38,7 +39,7 @@ lcm n m = n * (m `div` gcd n m)
 
 
 -- 6. Greatest Common Divisor { Continued
--- ssume that the list is non-empty and
+-- assume that the list is non-empty and
 -- all the numbers on the list are positive.
 gcdList :: [Int] -> Int
 gcdList [x] = x
@@ -56,3 +57,44 @@ anyDivisibleBy (x:xs) d |isDivisibleBy d x = True
 safeDivideBy :: Int -> Int -> Maybe Int
 safeDivideBy _ 0 = Nothing
 safeDivideBy n d = Just $ n `div` d
+
+
+-- * problems
+
+-- 9. Quirky Addition (*)
+addOpt :: Maybe Int -> Maybe Int -> Maybe Int
+addOpt Nothing _ = Nothing
+addOpt _ Nothing = Nothing
+addOpt (Just x) (Just y) =Just $  x + y
+
+
+-- 10. Quirky Addition (*) - continued
+addAllOpt :: [Maybe Int] -> Maybe Int
+addAllOpt xs |null xs = Nothing
+             |otherwise = addAllOpt' xs
+  where
+       addAllOpt' :: [Maybe Int] -> Maybe Int
+       addAllOpt' [] = Just 0
+       addAllOpt' (m:ms) =
+         case m of
+         Nothing  -> addAllOpt' ms
+         _        -> addOpt m (addAllOpt' ms)
+
+-- 11. Flip Flop (*)
+
+alternate :: [Int] -> Int
+alternate [] = 0
+alternate [x] = x
+alternate (x:y:xs) = x + (-y) + alternate xs
+
+-- 12. Minimum/Maximum (*)
+--  assume that the list is non-empty and
+minMax :: [Int] -> (Int, Int)
+minMax (n:ns) = minMax' n n ns
+  where
+    minMax' :: Int -> Int -> [Int] -> (Int,Int)
+    minMax' m1 m2  [] = (m1, m2) 
+    minMax' m1 m2 (x:xs) = let m1' = if m1 > x then x else m1
+                               m2' = if m2 < x then x else m2
+                           in minMax' m1' m2' xs
+

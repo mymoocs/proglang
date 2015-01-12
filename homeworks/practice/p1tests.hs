@@ -4,11 +4,12 @@ module P1tests where
 import Test.Hspec
 import P1
 import Prelude hiding(gcd, lcm)
+-- import Data.Maybe (Maybe)
 
 
 main :: IO ()
 main = hspec $ do
-  describe "Practice 1 problems tests" $ do
+  describe "problems tests | Practice 1" $ do
     it "Ex 1. isPositive" $ do
       isPositive (1::Int) `shouldBe` True
       -- read Defaulting rules articles,
@@ -30,11 +31,23 @@ main = hspec $ do
     it "Ex 8. Save DivideBy" $ do
       safeDivideBy 7 3 `shouldBe` Just 2
       safeDivideBy 7 0 `shouldBe` Nothing
+
+  describe "* problems testing | Practice 1" $ do
+    it "Ex 9.  Quirky Addition (*)" $ do
+      addOpt (Just 1) (Just 2) `shouldBe` Just 3
+      addOpt Nothing (Just 23) `shouldBe` Nothing
+    it "Ex 10. Quirky Addition over list (*)" $ do
+      addAllOpt [(Just 1), Nothing,  (Just 2)] `shouldBe` Just 3
+      addAllOpt [Nothing, (Just 23)] `shouldBe` Just 23
+      addAllOpt [] `shouldBe` Nothing
+    it "Ex 11. Flip Flop (*)" $ do
+      alternate [1,2,3,4] `shouldBe` -2
+    it "Ex 12. Minimum/Maximum (*)" $ do
+      minMax [1..10] `shouldBe` (1,10)
+
       
-          
-    
+  describe "Lists And Tuples, Oh My! problems testing | Practice 1" $ do
+    it "Ex 13(1).  " $ do
+      addOpt (Just 1) (Just 2) `shouldBe` Just 3
+      addOpt Nothing (Just 23) `shouldBe` Nothing
       
-    
-
-
-
