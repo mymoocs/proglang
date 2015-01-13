@@ -3,7 +3,7 @@
 module P1tests where
 import Test.Hspec
 import P1
-import Prelude hiding(gcd, lcm)
+import Prelude hiding(gcd, lcm, unzip, zip)
 -- import Data.Maybe (Maybe)
 
 
@@ -47,7 +47,12 @@ main = hspec $ do
 
       
   describe "Lists And Tuples, Oh My! problems testing | Practice 1" $ do
-    it "Ex 13(1).  " $ do
-      addOpt (Just 1) (Just 2) `shouldBe` Just 3
-      addOpt Nothing (Just 23) `shouldBe` Nothing
+    it "Ex 13(1). unzip" $ do
+      unzip [(1, 2), (3, 4), (5, 6)] `shouldBe` ([1, 3, 5], [2, 4,6])
+    it "Ex 13(2). zip" $ do
+      zip [1, 2, 3]  [4, 6] `shouldBe` [(1, 4), (2, 6)]
+    it "Ex 13(3). zipCycle" $ do      
+      zipRecycle [1, 2, 3] [4, 6] `shouldBe` [(1, 4), (2, 6),(3, 4)]
+    it "Ex 13(4). zipOpt" $ do      
+      zipOpt [1, 2, 3] [4, 6] `shouldBe` Nothing
       

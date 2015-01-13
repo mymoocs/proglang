@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 
 module P1 where
-import Prelude hiding(gcd)
+import  Prelude hiding(gcd, unzip, zip)
 -- import Data.Maybe
 default(Integer)
 
@@ -97,4 +97,30 @@ minMax (n:ns) = minMax' n n ns
     minMax' m1 m2 (x:xs) = let m1' = if m1 > x then x else m1
                                m2' = if m2 < x then x else m2
                            in minMax' m1' m2' xs
+
+-- 13. Lists And Tuples, Oh My!
+unzip :: [(Int,Int)] -> ([Int], [Int])
+unzip [] = ([], [])
+unzip ps  = ( [a | (a,_) <- ps], [b | (_,b) <- ps]) 
+
+-- 14. Lists And Tuples, Oh My! -- Continued (1)
+zip :: [Int] -> [Int] -> [(Int, Int)] 
+zip [] _ = []
+zip _ [] = []
+zip (x:xs) (y:ys) = (x,y) : zip xs ys
+
+-- 15. Lists And Tuples, Oh My! -- Continued (2)
+zipRecycle :: [Int] -> [Int] -> [(Int,Int)]
+zipRecycle xs ys = let n = length xs
+                       m = length ys
+                   in  zip xs ys ++ if n > m
+                                    then zip (drop m xs) ys
+                                    else zip xs (drop n ys)
+
+
+-- 16. Lists And Tuples, Oh My! -- Continued (3)
+zipOpt :: [Int] -> [Int] -> Maybe [(Int, Int)] 
+zipOpt xs ys |length xs == length ys = Just $ zip xs ys
+             |otherwise = Nothing
+
 
