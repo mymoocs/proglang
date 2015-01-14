@@ -55,4 +55,14 @@ main = hspec $ do
       zipRecycle [1, 2, 3] [4, 6] `shouldBe` [(1, 4), (2, 6),(3, 4)]
     it "Ex 13(4). zipOpt" $ do      
       zipOpt [1, 2, 3] [4, 6] `shouldBe` Nothing
-      
+    it "Ex 18.  BananaBanana" $ do  
+      duplicate ["a", "bc", "def"]
+      `shouldBe` ["a", "a", "bc", "bc","def", "def"]
+    it "Ex 19. Greetings, Earthlings! (*)" $ do
+      greeting (Just "Charilaos") `shouldBe` "Hello there, Charilaos!"
+    it "19. BananaBanana - Continued" $ do
+      repeats "banana" 2 `shouldBe` ["banana", "bananabanana"]
+      repeats "a" 5 `shouldBe` ["a","aa","aaa","aaaa","aaaaa"]
+    it "20. BananaBanana { Continued (Again) (*)" $ do
+      repeatsList ["abc", "def", "ghi"] [4, 0, 3] `shouldBe`
+        ["abc", "abc", "abc", "abc", "ghi", "ghi", "ghi"]

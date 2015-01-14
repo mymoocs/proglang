@@ -123,4 +123,40 @@ zipOpt :: [Int] -> [Int] -> Maybe [(Int, Int)]
 zipOpt xs ys |length xs == length ys = Just $ zip xs ys
              |otherwise = Nothing
 
+-- 17. BananaBanana
+duplicate :: [String] -> [String]
+duplicate [] = []
+duplicate (x:xs) = x:x:duplicate xs
 
+-- 18. Greetings, Earthlings! (*)
+greeting :: Maybe String -> String
+greeting name = let you = case name of
+                           Nothing -> "..."
+                           Just str -> str
+                in "Hello there, " ++ you ++ "!"
+
+-- 19. BananaBanana - Continued
+-- assume that the second argument is non-negative.
+repeats :: String -> Int -> [String]
+repeats s 0 = [s]
+repeats str n = repeats' str n 1
+  where
+    rep :: String -> Int -> String
+    rep _ 0 = []
+    rep s m = s ++ rep s (m-1)
+
+    repeats' :: String -> Int -> Int -> [String]
+    repeats' _ 0 _ = []
+    repeats' s q k = rep s k : repeats' s (q-1) (k+1)
+
+
+-- 20. BananaBanana { Continued (Again) (*)
+-- ssume that both lists have the same length.
+
+repeatsList :: [String] -> [Int] -> [String]
+repeatsList [] _ = []
+repeatsList (s:ss) (n:ns) = cycle s n ++ repeatsList ss ns
+  where
+    cycle :: String -> Int -> [String]
+    cycle _ 0    = []
+    cycle item m = item : cycle item (m-1)
