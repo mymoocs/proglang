@@ -21,3 +21,8 @@ main = hspec $ do
       groupByOutcome [(FinalGrade 21 (Just 73)), (FinalGrade 11 (Just 77))
                    ,(FinalGrade 22 (Just 55)), (FinalGrade 12 (Just 80))]
       `shouldBe` [(Pass,[11, 12]), (Fail, [21, 22])]
+  describe "Forest For The Trees section testing" $ do
+    it "Ex 3.1 tree height" $ do
+      treeHeight tree1 `shouldBe` 3  
+    it "Ex 3.2 Sum tree" $ do
+      sumTree tree2 `shouldBe` 10
