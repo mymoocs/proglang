@@ -110,6 +110,7 @@ tree3 = Node (Node (Node Leaf LeaveMeAlone Leaf) PruneMe Leaf)
 
 
 -- Back To The Future!
+-- already DONE, see p1.hs
 {-
  example of this sample suggest to do several problems from p1
  using pattern matching not list function, my solutions all use
