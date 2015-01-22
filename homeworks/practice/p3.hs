@@ -2,6 +2,9 @@
 
 module P3 where
 
+import qualified Test.HUnit      as T
+
+
 -- Ex 1 High-Order Fun
 -- There Can Be Only One
 
@@ -40,6 +43,12 @@ factorial n = foldl (*) 1 $ unfold (\x -> if x > n
                                           then Nothing
                                           else Just (x+1, x)) 1
 
+ex3Fact :: T.Test
+ex3Fact = T.TestList
+          [
+           -- U.teq "factorinal 4" (factorial 4) 24
+          ]
+
 -- 4. Unforeseen Developments
 
 unfoldMap :: (a -> b) -> [a] -> [b]
@@ -63,6 +72,8 @@ fixedPoint f = doUntil f (\x -> f x /= x)
 
 
 
+-- 8. Newton's Method
+-- square root is fixed point of 1/2 * (x+n/2)
 
 mySqrt :: Double -> Double
 mySqrt = mySqrt' 0.0001
@@ -73,6 +84,79 @@ mySqrt' eps n = doUntil f p n
     f = (\x -> 0.5 * (x + n / x))
     p = (\x -> abs(f x - x) > eps)
 
+-- 9. Deeper Into The Woods
+
+data Tree a = Leaf
+            | Node {left  :: Tree a
+                   ,value  :: a
+                   ,right :: Tree a
+                   }
+            deriving (Show)
+                     
+treeFold :: (a -> b -> a -> a) ->  a -> Tree b -> a
+treeFold _ acc Leaf = acc
+treeFold f acc (Node l v r) = 
+  let
+    lfold = treeFold f acc  l
+    rfold = treeFold f acc  r
+  in
+   f lfold v rfold 
+
+treeI :: Tree Int
+treeI = Node Leaf  1 (Node Leaf 2 Leaf)
+
+
+treeS :: Tree String
+treeS = Node (Node Leaf "bar" Leaf)  "foo" (Node Leaf "baz" Leaf)
+
+treeSum :: Tree Integer -> Integer
+treeSum = treeFold (\l v r -> l + v +r) 0
+
+treeUnfold :: (a -> Maybe (a, b, a)) -> a -> Tree b
+treeUnfold f x = case f x of
+                  Nothing        -> Leaf
+                  Just (l, v, r) -> Node (treeUnfold f l) v (treeUnfold f r)
+
+
+--Ex 10. A Grand Challenge
+
+data Expr = LiteralBool
+          | LiteralInt
+          | BinaryBoolOp Expr Expr
+          | BinaryIntOp  Expr Expr
+          | Comparison   Expr Expr
+          | Conditional  Expr Expr Expr
+          deriving (Show)
+
+data ExprType = TypeBool
+              | TypeInt
+              deriving (Show)
+
+ex10Expr :: T.Test
+ex10Expr = T.TestList
+           [
+             -- U.teq "factorinal 4" (factorial 4) 24
+           ]
+
+exprI :: Expr
+exprI = (Conditional LiteralBool
+                     LiteralInt
+                     (BinaryIntOp LiteralInt LiteralInt))
+      
+
+inferTest :: ExprType
+inferTest = inferType exprI
+           
+inferType :: Expr -> ExprType
+inferType = undefined
+
+
+
+
+
+-- Unit Tests
+
+p3 :: IO T.Counts
+p3 = do
+    T.runTestTT ex3Fact
     
--- 8. Newton's Method
--- square root is fixed point of 1/2 * (x+n/2)

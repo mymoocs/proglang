@@ -1,9 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module P3tests where
+module P3tests (main) where
 
 import P3
-
 import Test.Hspec
 
 main :: IO ()
@@ -30,6 +29,11 @@ main = hspec $ do
     it "Ex 6. Imperative factorial using doUntil" $ do
       factorial 4 `shouldBe` 24
 
-    it "Ex. 7 sqrt by Newton's method(fixed point)" $ do
+    it "Ex 7. sqrt by Newton's method(fixed point)" $ do
       abs(mySqrt 2 - sqrt 2) < 0.01 `shouldBe` True
-      
+
+    describe "problems on Tree | practice 3" $ do
+      it "Ex 8. fold tree" $ do
+        treeFold (\l v r -> l + v + r) 0 treeI `shouldBe` 3
+        treeFold (\l v r -> l ++ v ++ r) "!" treeS `shouldBe` "!bar!foo!baz!"
+  
