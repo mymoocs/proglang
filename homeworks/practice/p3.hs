@@ -130,12 +130,12 @@ data Expr = LiteralBool
 
 data ExprType = TypeBool
               | TypeInt
-              deriving (Show)
+              deriving (Show, Eq)
 
 ex10Expr :: T.Test
 ex10Expr = T.TestList
            [
-             -- U.teq "factorinal 4" (factorial 4) 24
+             -- inferType exprI == TypeInt
            ]
 
 exprI :: Expr
@@ -148,7 +148,37 @@ inferTest :: ExprType
 inferTest = inferType exprI
            
 inferType :: Expr -> ExprType
-inferType = undefined
+inferType exp =
+  case exp of
+   LiteralBool -> TypeBool
+   LiteralInt  -> TypeInt
+   BinaryBoolOp e1 e2 -> let t1 = inferType e1
+                             t2 = inferType e2
+                         in
+                          if (t1 == t2 && t1 == TypeBool)
+                          then t1
+                          else error "Type error in BinaryBoolOp"
+   BinaryIntOp e1 e2 -> let t1 = inferType e1
+                            t2 = inferType e2
+                        in
+                         if (t1 == t2 && t1 == TypeInt)
+                         then  t1
+                         else error "Type error in BinaryIntOp"
+   Comparison e1 e2 -> let t1 = inferType e1
+                           t2 = inferType e2
+                       in
+                        if (t1 == t2 && t1 == TypeInt)
+                        then  TypeBool
+                        else error "Type error in Comparison" 
+   Conditional e1 e2 e3 ->  let cond = inferType e1
+                                t1 = inferType e2
+                                t2 = inferType e3
+                         in
+                             if (cond == TypeBool && t1 == t2)
+                             then t1
+                             else error "Type error in Conditional" 
+
+  
 
 
 
