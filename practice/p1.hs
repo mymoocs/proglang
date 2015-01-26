@@ -1,6 +1,16 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module P1 where
+module P1 ( gcd
+          , gcdList
+          , isDivisibleBy
+          , anyDivisibleBy
+          , addOpt
+          , addAllOpt
+          , alternate
+          , minMax
+          ) where
+
+
 import  Prelude hiding(gcd, unzip, zip)
 -- import Data.Maybe
 default(Integer)

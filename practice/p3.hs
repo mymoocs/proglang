@@ -2,6 +2,7 @@
 
 module P3 where
 
+import qualified  P1 as P1
 import qualified Test.HUnit      as T
 
 
@@ -182,6 +183,47 @@ inferType exp =
 
 
 
+-- Ex 11. Back To The Future! 2
+
+-- 11.1 GCD - Final Redux
+-- for details see p1, ex 6
+-- assume that the list is non-empty and
+-- all the numbers on the list are positive.
+gcdList :: [Int] -> Int
+gcdList xs@(x:_) = foldr P1.gcd x xs 
+
+--ToDo: test using P1.gcdList
+-- 11.2
+
+anyDivisibleBy :: [Int] -> Int -> Bool
+anyDivisibleBy xs d = any (\x -> P1.isDivisibleBy d x) xs
+--ToDo: test using P1.
+-- 11.3 Quirky Addition { Continued { Final Redux (*)
+
+addAllOpt :: [Maybe Int] -> Maybe Int
+addAllOpt = foldr P1.addOpt (Just 0) .  filter (/= Nothing) 
+--ToDo: test using P1.addAllOpt
+
+-- 11.4 Flip Flop (*)
+
+-- alternate :: [Int] -> Int
+alternate = snd . foldl (\(s, acc) x -> (-s, acc + s * x))  (1,0) 
+
+-- this version give wrong result in even lenght list,
+-- because foldr start calcuation from the end of list
+alternateR = snd . foldr (\x (s, acc) -> (-s, acc + s * x))  (1,0)
+--test using P1.alternate
+
+-- 11.5 Minimum/Maximum - Final Redux (*)
+-- test using P1.minMax
+minMax :: [Int] -> (Int, Int)
+minMax xs@(x:_) = foldr (\x (min', max') ->
+                            (if x < min' then x else min',
+                             if x > max' then x else max')) (x,x) xs 
+
+
+
+-- 12 Lists And Tuples, Oh My! - Final Redux
 
 
 -- Unit Tests
