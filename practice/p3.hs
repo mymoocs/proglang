@@ -2,9 +2,10 @@
 
 module P3 where
 
-import qualified  P1 as P1
+import qualified P1              as P1
 import qualified Test.HUnit      as T
 
+import Prelude hiding (unzip, zip)
 
 -- Ex 1 High-Order Fun
 -- There Can Be Only One
@@ -149,8 +150,8 @@ inferTest :: ExprType
 inferTest = inferType exprI
            
 inferType :: Expr -> ExprType
-inferType exp =
-  case exp of
+inferType e =
+  case e of
    LiteralBool -> TypeBool
    LiteralInt  -> TypeInt
    BinaryBoolOp e1 e2 -> let t1 = inferType e1
@@ -207,23 +208,60 @@ addAllOpt = foldr P1.addOpt (Just 0) .  filter (/= Nothing)
 -- 11.4 Flip Flop (*)
 
 -- alternate :: [Int] -> Int
+alternate :: [Integer] -> Integer
 alternate = snd . foldl (\(s, acc) x -> (-s, acc + s * x))  (1,0) 
 
 -- this version give wrong result in even lenght list,
 -- because foldr start calcuation from the end of list
+alternateR :: [Integer] -> Integer
 alternateR = snd . foldr (\x (s, acc) -> (-s, acc + s * x))  (1,0)
 --test using P1.alternate
 
 -- 11.5 Minimum/Maximum - Final Redux (*)
 -- test using P1.minMax
 minMax :: [Int] -> (Int, Int)
-minMax xs@(x:_) = foldr (\x (min', max') ->
-                            (if x < min' then x else min',
-                             if x > max' then x else max')) (x,x) xs 
+minMax xs@(x:_) = foldr (\y (min', max') ->
+                            (if y < min' then y else min',
+                             if y > max' then y else max')) (x,x) xs 
 
 
 
 -- 12 Lists And Tuples, Oh My! - Final Redux
+
+-- 12.1 
+
+ex12 :: T.Test
+ex12 = T.TestList
+       [
+        --  U.teq (Prelude.zip [1..10] "abcdef") (zip [1..10] "abcdef")
+       ]
+unzip :: [(a,b)] -> ([a], [b])
+unzip = foldr (\(x,y) (xs, ys) -> (x:xs, y:ys)) ([], [])
+
+-- 12.2
+-- helper function
+zipGen :: ([t], [t1]) -> Maybe (([t], [t1]), (t, t1))
+zipGen ([], _) = Nothing
+zipGen (_, []) = Nothing
+zipGen ((x:xs), (y:ys)) = Just ((xs,ys), (x,y))
+
+zip :: [t] -> [t1] -> [(t, t1)]
+zip xs ys = unfold zipGen (xs,ys)
+
+-- 13 BBCA - Final Redux (*)
+
+-- repeatsList ["abc", "def", "ghi"] [4, 0, 3]
+-- `shouldBe`  ["abc", "abc", "abc", "abc", "ghi", "ghi", "ghi"]
+repeatsList :: [a] -> [Int] -> [a]
+repeatsList xs ns =
+  foldr (\(s,n) ss -> (replicate n s) ++ ss) [] (zip xs ns)
+
+
+-- 14 38 Cons Cells - Final Redux
+lengthOfaList :: [a] -> Integer
+lengthOfaList = foldr(\_ s -> s + 1) 0
+
+-- 15 Forest For The Trees - Final Redux
 
 
 -- Unit Tests
