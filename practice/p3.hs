@@ -3,6 +3,7 @@
 module P3 where
 
 import qualified P1              as P1
+import qualified P2              as P2
 import qualified Test.HUnit      as T
 
 import Prelude hiding (unzip, zip)
@@ -117,7 +118,7 @@ treeSum = treeFold (\l v r -> l + v +r) 0
 treeUnfold :: (a -> Maybe (a, b, a)) -> a -> Tree b
 treeUnfold f x = case f x of
                   Nothing        -> Leaf
-                  Just (l, v, r) -> Node (treeUnfold f l) v (treeUnfold f r)
+                  Just (l, v, r) -> Node (treeUnfold f l) v (treeUnfold f r)    
 
 
 --Ex 10. A Grand Challenge
@@ -264,7 +265,35 @@ lengthOfaList = foldr(\_ s -> s + 1) 0
 -- 15 Forest For The Trees - Final Redux
 
 
--- Unit Tests
+-- 15.1
+
+treeHeight :: Tree a -> Int
+treeHeight =  treeFold (\l _ r -> 1 + max l r ) 0
+
+-- 15.2
+-- sumTree :: Num a => Tree a -> Int
+-- ToDo: research the defaulting warnings
+-- Defaulting the following constraint(s) to type `Integer'
+--  (Num a0) arising from a use of `+
+sumTree = treeFold (\l v r -> l + v + r) 0
+
+
+-- 15.3
+data Flag = LeaveMeAlone
+          | PruneMe
+          deriving (Show, Eq)
+
+gardener :: Tree Flag -> Tree Flag
+gardener tree = treeUnfold helper tree
+  where
+    helper state = case state of
+                    (Node _ PruneMe _) -> Nothing
+                    (Node l v r)       -> Just (l, v, r)
+                    _                  -> Nothing
+
+        
+
+-- Unit Testsg
 
 p3 :: IO T.Counts
 p3 = do

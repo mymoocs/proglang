@@ -2,7 +2,13 @@
 {-# LANGUAGE ScopedTypeVariables  #-}
 
 
-module P2 where
+module P2 ( treeHeight
+          , sumTree
+          , gardener
+          , tree1
+          , tree2
+          , tree3
+          ) where
 
 -- 1. 38 Cons Cells (*)
 
